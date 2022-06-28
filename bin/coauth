@@ -1,0 +1,30 @@
+#!/bin/bash
+
+if [[ -z "${CONFIG_ROOT}" ]]; then
+  CONFIG_ROOT="${HOME}/.config"
+else
+  CONFIG_ROOT="${CONFIG_ROOT}"
+fi
+
+
+TEMPLATE="$CONFIG_ROOT/git-template"
+
+if [[ $1 == "reset" ]]; then
+    > $CONFIG_ROOT/git-template
+    echo "Pairing mode disabled. Run 'coauth' to start session."
+    exit 0
+fi
+
+echo -e "\n" >> $TEMPLATE
+
+while true ; do
+	AUTHOR="$(cat $CONFIG_ROOT/coauthors | fzy)"
+
+	if [[ "$AUTHOR" != "" ]]; then
+		echo "Co-authored-by: $AUTHOR" >> $TEMPLATE
+		echo "Added co-author: $AUTHOR"
+	else
+        echo "Pairing mode enabled. Run 'coauth reset' to end session."
+		break
+	fi
+done
